@@ -1,0 +1,17 @@
+button#boom {
+  background-color: red;
+  border: 5px solid black;
+  border-radius: 50%;
+  display: block;
+  margin: auto;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 2em;
+  padding: 1em;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+}
+
+button#boom.playing {
+  background-color: purple;
+}
