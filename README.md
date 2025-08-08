@@ -12,3 +12,5 @@ Returns sampling frequency.
 [Stack exchange 2](https://dsp.stackexchange.com/questions/53125/write-a-440-hz-sine-wave-to-wav-file-using-python-and-scipy?newreg=1e1750bd983f4032acf45c258d9195b4)
 
 [Open Source Audio Driver Port Audio](https://www.portaudio.com/)
+
+[Web Audio Examples from MDN](https://github.com/mdn/webaudio-examples)
