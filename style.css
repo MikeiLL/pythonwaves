@@ -11,20 +11,22 @@
 
 button#boom {
   background-color: var(--red);
-  border: 5px solid var(--black);
+  border: 10px solid var(--black);
   border-radius: 50%;
   display: block;
   margin: auto;
   font-family: 'Courier New', Courier, monospace;
   font-size: 2em;
   padding: 4em;
-  width: 500px;
-  height: 500px;
+  width: 400px;
+  height: 400px;
   font-weight: bold;
   color: white;
   cursor: pointer;
+  transition: background-color 2s, border 1.5s ease-in;
 }
 
 button#boom.playing {
-  background-color: purple;
+  background-color: rgb(96, 2, 72);
+  border: 20px solid var(--black);
 }
