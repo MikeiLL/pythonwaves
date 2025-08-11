@@ -18,3 +18,5 @@ Returns sampling frequency.
 [Physical Modeling Book](https://books.mercity.ai/books/Audio-Analysis-and-Synthesis---Introduction-to-Audio-Signal-Processing/audio_synthesis_methods/05_Physical_Modeling_Synthesis)
 
 [Physical Modeling Wikipedia](https://en.wikipedia.org/wiki/Physical_modelling_synthesis)
+
+Book: Digital Sound Synthesis by Physical Modeling Using the Functional Transformation Method by Trautmann, Lutz; Rabenstein, Rudolf
