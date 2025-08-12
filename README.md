@@ -20,3 +20,5 @@ Returns sampling frequency.
 [Physical Modeling Wikipedia](https://en.wikipedia.org/wiki/Physical_modelling_synthesis)
 
 Book: Digital Sound Synthesis by Physical Modeling Using the Functional Transformation Method by Trautmann, Lutz; Rabenstein, Rudolf
+
+[Tone.js](https://tonejs.github.io/docs/15.0.4/classes/Filter.html)
