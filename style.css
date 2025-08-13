@@ -46,6 +46,10 @@ main>fieldset {
 }
 
 main>fieldset span#decayvalue {
-  width: 2em;
+  width: 3em;
   border: 1px solid var(--black);
+  padding: 0.1em 0.5em;
+  text-align: center;
+  font-family: 'Courier New', Courier, monospace;
+  background-color: #ccc;
 }
