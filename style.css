@@ -33,24 +33,19 @@ button#boom.playing {
   border: 20px solid var(--black);
 }
 
-/* button#sweep {
-  background-color: var(--green);
-  border: 10px solid var(--black);
-  border-radius: 50%;
-  display: block;
-  margin: auto;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 2em;
-  padding: 4em;
-  width: 400px;
-  height: 400px;
-  font-weight: bold;
-  color: var(--yellow);
-  cursor: pointer;
-  transition: background-color 2s, border 1.5s ease-in;
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1em;
 }
 
-button#sweep.playing {
-  background-color: rgb(2, 80, 96);
-  border: 20px solid var(--black);
-} */
+main>fieldset {
+  display: flex;
+  gap: 1em;
+}
+
+main>fieldset span#decayvalue {
+  width: 2em;
+  border: 1px solid var(--black);
+}
