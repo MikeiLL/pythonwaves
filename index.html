@@ -30,11 +30,21 @@
         <button type="button" id="boom">Boom</button>
         <fieldset>
           <legend>Settings</legend>
-          <label>
-            Decay
-            <input type="range" id="decay" name="decay" value="1" min="0.1" max="2" step="0.1">
-          </label>
-          <span id="decayvalue">1</span>
+          <table>
+            <tbody>
+              <tr>
+                <td>
+                  <label>
+                    Decay
+                    <input type="range" id="decay" name="decay" value="1" min="0.1" max="2" step="0.1">
+                  </label>
+                </td>
+                <td>
+                  <span id="decayvalue">1</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </fieldset>
       </fieldset>
       <fieldset class="column">
@@ -42,11 +52,33 @@
         <button type="button" id="thwap">thwap</button>
         <fieldset>
           <legend>Settings</legend>
-          <label>
-            Decay
-            <input type="range" id="thwapdecay" name="thwapdecay" value="1" min="0.1" max="2" step="0.1">
-          </label>
-          <span id="thwapdecayvalue">1</span>
+          <table>
+            <tbody>
+              <tr>
+                <td>
+                  <label>
+                    Length
+                    <input type="range" id="thwaplength" name="thwaplength" value="1" min="0.1" max="2" step="0.1">
+                  </label>
+                </td>
+                <td>
+                  <span id="thwaplengthvalue">1</span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <label>
+                    Frequency
+                    <input type="range" id="thwapfrequency" name="thwapfrequency" value="1000" min="500" max="16000"
+                      step="100">
+                  </label>
+                </td>
+                <td>
+                  <span id="thwapfrequencyvalue">1</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </fieldset>
       </fieldset>
     </fieldset>
