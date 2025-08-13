@@ -9,6 +9,7 @@
   --red: #C22D2D;
   --green: #116935;
   --yellow: #ffff00;
+  --grey: grey;
 }
 
 button#boom {
@@ -33,6 +34,23 @@ button#boom.playing {
   border: 20px solid var(--black);
 }
 
+button#thwap {
+  background-color: var(--grey);
+  border: 10px solid var(--black);
+  border-radius: 50%;
+  display: block;
+  margin: auto;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 2em;
+  padding: 2em;
+  width: 300px;
+  height: 300px;
+  font-weight: bold;
+  color: var(--black);
+  cursor: pointer;
+  transition: background-color 2s, border 1.5s ease-in;
+}
+
 main {
   display: flex;
   flex-direction: column;
@@ -45,7 +63,14 @@ main>fieldset {
   gap: 1em;
 }
 
-main>fieldset span#decayvalue {
+main fieldset.column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1em;
+}
+
+main fieldset.column span {
   width: 3em;
   border: 1px solid var(--black);
   padding: 0.1em 0.5em;
