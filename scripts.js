@@ -105,8 +105,6 @@ const noisethwap = (e) => {
       frequency: bandHz.value,
     });
 
-    console.log(bandHz.value);
-
     gainNode.gain.setValueAtTime(1, startTime);
     gainNode.gain.setTargetAtTime(0, startTime, decay.value / 2);
     // Connect our graph
