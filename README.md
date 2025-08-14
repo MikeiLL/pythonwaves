@@ -22,3 +22,5 @@ Returns sampling frequency.
 Book: Digital Sound Synthesis by Physical Modeling Using the Functional Transformation Method by Trautmann, Lutz; Rabenstein, Rudolf
 
 [Tone.js](https://tonejs.github.io/docs/15.0.4/classes/Filter.html)
+
+[Logic Pro Impulse Responses](https://support.apple.com/guide/logicpro-iru/impulse-response-utility-overview-dev923ff912d/mac)
