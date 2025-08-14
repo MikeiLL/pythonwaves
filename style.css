@@ -63,6 +63,11 @@ main>fieldset {
   gap: 1em;
 }
 
+fieldset#sequencer {
+  display: flex;
+  flex-direction: column;
+}
+
 main fieldset.column {
   display: flex;
   flex-direction: column;

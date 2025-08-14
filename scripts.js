@@ -1,11 +1,14 @@
 import {choc, set_content, on, DOM} from "https://rosuav.github.io/choc/factory.js";
-const { } = choc; //autoimport
+const {INPUT, TD, TH} = choc; //autoimport
 import {impulseResponse} from "./assets.js";
 
 let cutoff = null, cutoffTM = null;
 const decay = document.getElementById("decay");
 const thwaplength = document.getElementById("thwaplength");
 const bandHz = document.getElementById("thwapfrequency");
+const stepCount = DOM("#stepCount");
+let playing;
+let timer;
 
 // http://stackoverflow.com/questions/21797299/convert-base64-string-to-arraybuffer
 function base64ToArrayBuffer(base64) {
@@ -58,7 +61,6 @@ const sineboom = (e) => {
 
 const noisethwap = (e) => {
   let btn = e.match;
-  if (cutoff) cutoff();
   btn.classList.add("playing");
   const gainNode = new GainNode(audioCtx);
   let startTime = audioCtx.currentTime;
@@ -114,8 +116,33 @@ const noisethwap = (e) => {
   playNoise();
 }
 
+function buildSteps() {
+  document.querySelectorAll("#sequencer td").forEach(cell => cell.remove());
+  for (let i = 0; i < stepCount.value; i++) {
+    rows.forEach(r => r.append(TD(INPUT({type: "checkbox"}))));
+  }
+}
+
 on("click", "#thwap", noisethwap);
 on("click", "#boom", sineboom);
+stepCount.onchange = buildSteps;
 decay.addEventListener("input", (e) => DOM("#decayvalue").innerHTML = e.currentTarget.value);
 thwaplength.addEventListener("input", (e) => DOM("#thwaplengthvalue").innerHTML = e.currentTarget.value);
 thwapfrequency.addEventListener("input", (e) => DOM("#thwapfrequencyvalue").innerHTML = e.currentTarget.value);
+const rows = document.querySelectorAll("#sequencer tr");
+
+on("click", "#togglePlay", () => {
+  playing = !playing;
+  function inqueue() {
+    // loop through a number of beats (step through columns)
+    // if checked call corresponding function
+    // loop a number of beats, know which beat we're on
+    // and what time it happens
+  }
+  if (playing) timer = setInterval(inqueue, 0.5);
+  else clearInterval(timer);
+});
+
+rows[0].append(TH("thwap"));
+rows[1].append(TH("boom"));
+buildSteps();
