@@ -88,8 +88,8 @@ main fieldset.column span {
 
 /* Checkboxes */
 
-#sequencer table input {
-  /* appearance: none; */
+/* #sequencer table input {
+  appearance: none;
   width: 9vw;
   height: 9vw;
   min-width: 56px;
@@ -100,4 +100,4 @@ main fieldset.column span {
   margin: 0px;
   padding: 0px;
   border: var(--red);
-}
+} */
