@@ -10,6 +10,8 @@
   --green: #116935;
   --yellow: #ffff00;
   --grey: grey;
+  --white: #eeeeff;
+  --border: red;
 }
 
 button#boom {
@@ -82,4 +84,20 @@ main fieldset.column span {
   text-align: center;
   font-family: 'Courier New', Courier, monospace;
   background-color: #ccc;
+}
+
+/* Checkboxes */
+
+#sequencer table input {
+  /* appearance: none; */
+  width: 9vw;
+  height: 9vw;
+  min-width: 56px;
+  min-height: 56px;
+  max-width: 96px;
+  max-height: 96px;
+  background-color: var(--white);
+  margin: 0px;
+  padding: 0px;
+  border: var(--red);
 }
