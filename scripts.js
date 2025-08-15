@@ -28,11 +28,14 @@ const sineboom = (e) => {
   let btn = e.match;
   if (cutoff) cutoff();
   btn.classList.add("playing");
+  playBoom(audioCtx.currentTime);
+}
+
+function playBoom(startTime) {
   const gainNode = new GainNode(audioCtx);
   // create Oscillator node
   const oscillator = audioCtx.createOscillator();
   const biquadFilter = new BiquadFilterNode(audioCtx);
-  let startTime = audioCtx.currentTime;
   biquadFilter.type = "peaking";
   biquadFilter.frequency.value = 440;
   biquadFilter.gain.value = 40;
@@ -62,58 +65,57 @@ const sineboom = (e) => {
 const noisethwap = (e) => {
   let btn = e.match;
   btn.classList.add("playing");
+  playNoise(audioCtx.currentTime);
+}
+
+/* Lift from MDN step sequencer example */
+function playNoise(startTime) {
   const gainNode = new GainNode(audioCtx);
-  let startTime = audioCtx.currentTime;
+  const bufferSize = audioCtx.sampleRate * thwaplength.value; // set the time of the note
+  const reverbNode = audioCtx.createConvolver();
+  // impulseResponse is defined in assets.js
+  // It's a base64 encoded string.
+  // Convert it to a binary array first
+  const reverbSoundArrayBuffer = base64ToArrayBuffer(impulseResponse);
 
-  /* Lift from MDN step sequencer example */
-  function playNoise() {
-    const bufferSize = audioCtx.sampleRate * thwaplength.value; // set the time of the note
-    const reverbNode = audioCtx.createConvolver();
-    // impulseResponse is defined in assets.js
-    // It's a base64 encoded string.
-    // Convert it to a binary array first
-    const reverbSoundArrayBuffer = base64ToArrayBuffer(impulseResponse);
-
-    audioCtx.decodeAudioData(
-      reverbSoundArrayBuffer,
-      (buffer) => {
-        reverbNode.buffer = buffer;
-      },
-      (e) => {
-        console.error("Error when decoding audio data", e.err);
-      }
-    );
-
-    // Create an empty buffer
-    const noiseBuffer = new AudioBuffer({
-      length: bufferSize,
-      sampleRate: audioCtx.sampleRate,
-    });
-
-    // Fill the buffer with noise
-    const data = noiseBuffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      data[i] = Math.random() * 2 - 1;
+  audioCtx.decodeAudioData(
+    reverbSoundArrayBuffer,
+    (buffer) => {
+      reverbNode.buffer = buffer;
+    },
+    (e) => {
+      console.error("Error when decoding audio data", e.err);
     }
+  );
 
-    // Create a buffer source for our created data
-    const noise = new AudioBufferSourceNode(audioCtx, {
-      buffer: noiseBuffer,
-    });
+  // Create an empty buffer
+  const noiseBuffer = new AudioBuffer({
+    length: bufferSize,
+    sampleRate: audioCtx.sampleRate,
+  });
 
-    // Filter the output
-    const bandpass = new BiquadFilterNode(audioCtx, {
-      type: "bandpass",
-      frequency: bandHz.value,
-    });
-
-    gainNode.gain.setValueAtTime(1, startTime);
-    gainNode.gain.setTargetAtTime(0, startTime, decay.value / 2);
-    // Connect our graph
-    noise.connect(bandpass).connect(reverbNode).connect(gainNode).connect(audioCtx.destination);
-    noise.start();
+  // Fill the buffer with noise
+  const data = noiseBuffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) {
+    data[i] = Math.random() * 2 - 1;
   }
-  playNoise();
+
+  // Create a buffer source for our created data
+  const noise = new AudioBufferSourceNode(audioCtx, {
+    buffer: noiseBuffer,
+  });
+
+  // Filter the output
+  const bandpass = new BiquadFilterNode(audioCtx, {
+    type: "bandpass",
+    frequency: bandHz.value,
+  });
+
+  gainNode.gain.setValueAtTime(1, startTime);
+  gainNode.gain.setTargetAtTime(0, startTime, decay.value / 2);
+  // Connect our graph
+  noise.connect(bandpass).connect(reverbNode).connect(gainNode).connect(audioCtx.destination);
+  noise.start();
 }
 
 function buildSteps() {
