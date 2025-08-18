@@ -38,28 +38,33 @@ function playBoom(startTime, btn) {
   // create Oscillator node
   const oscillator = audioCtx.createOscillator();
   const biquadFilter = new BiquadFilterNode(audioCtx);
-  biquadFilter.type = "peaking";
+  /* biquadFilter.type = "peaking";
   biquadFilter.frequency.value = 440;
   biquadFilter.gain.value = 40;
   biquadFilter.frequency.setValueAtTime(110, startTime);
   biquadFilter.frequency.setTargetAtTime(1000, startTime, decay.value / 4);
   biquadFilter.frequency.setTargetAtTime(110, startTime, decay.value / 2);
-
+ */
   oscillator.type = "sine";
   oscillator.frequency.setValueAtTime(110, startTime); // value in hertz
 
-  oscillator/* .connect(gainNode).connect(biquadFilter) */.connect(audioCtx.destination);
+  oscillator.connect(gainNode)/* .connect(biquadFilter) */.connect(audioCtx.destination);
   oscillator.start(startTime);
-  oscillator.frequency.setTargetAtTime(20, startTime, 4);
-  gainNode.gain.setValueAtTime(0.6, startTime);
-  gainNode.gain.setTargetAtTime(0, startTime, decay.value / 2);
-  cutoff = () => {
-    oscillator.stop();
-    btn?.classList.remove("playing");
-    clearTimeout(cutoffTM);
-    cutoffTM = cutoff = null;
+  oscillator.frequency.setTargetAtTime(20, startTime, +decay.value);
+  gainNode.gain.cancelScheduledValues(startTime);
+  gainNode.gain.setValueAtTime(1, startTime);
+  gainNode.gain.setTargetAtTime(0, startTime, +decay.value / 2 );
+  oscillator.stop(startTime + decay.value * 2);
+  gainNode.gain.setValueAtTime(0, startTime + +decay.value);
+  if (btn) {
+    cutoff = () => {
+      //oscillator.stop();
+      btn?.classList.remove("playing");
+      clearTimeout(cutoffTM);
+      cutoffTM = cutoff = null;
+    }
+    cutoffTM = setTimeout(cutoff, decay.value * 2000);
   }
-  cutoffTM = setTimeout(cutoff, decay.value * 2000);
 }
 
 const noisethwap = (e) => {
@@ -68,7 +73,6 @@ const noisethwap = (e) => {
   playNoise(audioCtx.currentTime);
 }
 
-const bufferSize = audioCtx.sampleRate * thwaplength.value; // set the time of the note
 // impulseResponse is defined in assets.js
 // It's a base64 encoded string.
 // Convert it to a binary array first
@@ -80,6 +84,7 @@ const impulseBuffer = await audioCtx.decodeAudioData(reverbSoundArrayBuffer);
 function playNoise(startTime) {
   const gainNode = new GainNode(audioCtx);
   const reverbNode = audioCtx.createConvolver();
+  const bufferSize = audioCtx.sampleRate * thwaplength.value; // set the time of the note
   reverbNode.buffer = impulseBuffer;
   // Create an empty buffer
   const noiseBuffer = new AudioBuffer({
@@ -105,7 +110,7 @@ function playNoise(startTime) {
   });
 
   gainNode.gain.setValueAtTime(1, startTime);
-  gainNode.gain.setTargetAtTime(0, startTime, decay.value / 2);
+  gainNode.gain.setTargetAtTime(0, startTime, thwaplength.value / 2);
   // Connect our graph
   noise.connect(bandpass)/* .connect(reverbNode) */.connect(gainNode).connect(audioCtx.destination);
   noise.start(startTime);
