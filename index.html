@@ -36,7 +36,7 @@
                 <td>
                   <label>
                     Decay
-                    <input type="range" id="decay" name="decay" value="1" min="0.1" max="2" step="0.1">
+                    <input type="range" id="decay" name="decay" value="0.4" min="0.1" max="2" step="0.1">
                   </label>
                 </td>
                 <td>
@@ -86,10 +86,14 @@
     <fieldset id="sequencer">
       <legend>Sequencer</legend>
       <fieldset>
-        <legend></legend>
+        <legend>Settings</legend>
         <label>
           Step Count
-          <input id=stepCount type="number" step="1" value=8 min="1" max="16">
+          <input id=stepCount type="number" step="1" value=2 min="1" max="16">
+        </label>
+        <label>
+          Tempo
+          <input id=tempoSlider type="range" step="1" value=120 min="40" max="360">
         </label>
         <button type="button" id="togglePlay">Play &gt;</button>
       </fieldset>
