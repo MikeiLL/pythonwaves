@@ -10,7 +10,6 @@ const stepCount = DOM("#stepCount");
 const tempoSlider = DOM("#tempoSlider");
 let playing;
 let timer;
-let bpm = tempoSlider.value;
 
 // http://stackoverflow.com/questions/21797299/convert-base64-string-to-arraybuffer
 function base64ToArrayBuffer(base64) {
@@ -36,8 +35,26 @@ const sineboom = (e) => {
 function playBoom(startTime, btn) {
   const gainNode = new GainNode(audioCtx);
   // create Oscillator node
-  const oscillator = audioCtx.createOscillator();
   const biquadFilter = new BiquadFilterNode(audioCtx);
+
+  const oscillator = new OscillatorNode(audioCtx, {
+    frequency: 110,
+    type: "sine",
+  });
+
+  oscillator.frequency.setTargetAtTime(0, startTime, startTime + +decay.value);
+  const sweepEnv = new GainNode(audioCtx);
+  sweepEnv.gain.cancelScheduledValues(startTime);
+  sweepEnv.gain.setValueAtTime(1, startTime);
+  sweepEnv.gain.linearRampToValueAtTime(
+    0,
+    startTime + +decay.value
+  );
+  oscillator.frequency.setTargetAtTime(20, startTime + 0.12, +decay.value);
+
+  oscillator.connect(sweepEnv).connect(audioCtx.destination);
+  oscillator.start(startTime);
+  oscillator.stop(startTime + +decay.value);
   /* biquadFilter.type = "peaking";
   biquadFilter.frequency.value = 440;
   biquadFilter.gain.value = 40;
@@ -45,17 +62,17 @@ function playBoom(startTime, btn) {
   biquadFilter.frequency.setTargetAtTime(1000, startTime, decay.value / 4);
   biquadFilter.frequency.setTargetAtTime(110, startTime, decay.value / 2);
  */
-  oscillator.type = "sine";
-  oscillator.frequency.setValueAtTime(110, startTime); // value in hertz
+  /* oscillator.type = "sine";
+  oscillator.frequency.setValueAtTime(110, startTime); // value in hertz */
 
-  oscillator.connect(gainNode)/* .connect(biquadFilter) */.connect(audioCtx.destination);
-  oscillator.start(startTime);
+  //oscillator.connect(gainNode)/* .connect(biquadFilter) */.connect(audioCtx.destination);
+  /* oscillator.start(startTime);
   oscillator.frequency.setTargetAtTime(20, startTime, +decay.value);
   gainNode.gain.cancelScheduledValues(startTime);
   gainNode.gain.setValueAtTime(1, startTime);
   gainNode.gain.setTargetAtTime(0, startTime, +decay.value / 2 );
   oscillator.stop(startTime + decay.value * 2);
-  gainNode.gain.setValueAtTime(0, startTime + +decay.value);
+  gainNode.gain.setValueAtTime(0, startTime + +decay.value); */
   if (btn) {
     cutoff = () => {
       //oscillator.stop();
@@ -137,8 +154,8 @@ on("click", "#togglePlay", () => {
   let stepTime = audioCtx.currentTime; // in seconds
   let currentStep = -1;
   function inqueue() {
-    console.log(audioCtx.currentTime);
-    const stepDuration = 60 / bpm;
+    const stepDuration = 60 / tempoSlider.value;
+    console.log(stepDuration);
     while (stepTime < audioCtx.currentTime + bufferTime) {
       if (++currentStep >= stepCount.value) currentStep = 0;
       stepTime += stepDuration;
