@@ -52,27 +52,12 @@ function playBoom(startTime, btn) {
   );
   oscillator.frequency.setTargetAtTime(20, startTime + 0.12, +decay.value);
 
-  oscillator.connect(sweepEnv).connect(audioCtx.destination);
   oscillator.start(startTime);
   oscillator.stop(startTime + +decay.value);
-  /* biquadFilter.type = "peaking";
-  biquadFilter.frequency.value = 440;
-  biquadFilter.gain.value = 40;
-  biquadFilter.frequency.setValueAtTime(110, startTime);
-  biquadFilter.frequency.setTargetAtTime(1000, startTime, decay.value / 4);
-  biquadFilter.frequency.setTargetAtTime(110, startTime, decay.value / 2);
- */
-  /* oscillator.type = "sine";
-  oscillator.frequency.setValueAtTime(110, startTime); // value in hertz */
+  /* biquadFilter.frequency.setTargetAtTime(1000, startTime, decay.value / 4);
+  biquadFilter.frequency.setTargetAtTime(110, startTime, decay.value / 2); */
 
-  //oscillator.connect(gainNode)/* .connect(biquadFilter) */.connect(audioCtx.destination);
-  /* oscillator.start(startTime);
-  oscillator.frequency.setTargetAtTime(20, startTime, +decay.value);
-  gainNode.gain.cancelScheduledValues(startTime);
-  gainNode.gain.setValueAtTime(1, startTime);
-  gainNode.gain.setTargetAtTime(0, startTime, +decay.value / 2 );
-  oscillator.stop(startTime + decay.value * 2);
-  gainNode.gain.setValueAtTime(0, startTime + +decay.value); */
+  oscillator.connect(gainNode).connect(audioCtx.destination);
   if (btn) {
     cutoff = () => {
       //oscillator.stop();
@@ -126,6 +111,11 @@ function playNoise(startTime) {
     frequency: bandHz.value,
   });
 
+  bandpass.frequency.linearRampToValueAtTime(
+    40,
+    startTime + +decay.value
+  );
+
   gainNode.gain.setValueAtTime(1, startTime);
   gainNode.gain.setTargetAtTime(0, startTime, thwaplength.value / 2);
   // Connect our graph
@@ -148,14 +138,14 @@ thwaplength.addEventListener("input", (e) => DOM("#thwaplengthvalue").innerHTML 
 thwapfrequency.addEventListener("input", (e) => DOM("#thwapfrequencyvalue").innerHTML = e.currentTarget.value);
 const rows = document.querySelectorAll("#sequencer tr");
 
-on("click", "#togglePlay", () => {
+on("click", "#togglePlay", (e) => {
   playing = !playing;
+  set_content(e.match, playing ? "Stop ||" : "Play >")
   const bufferTime = 0.2;
   let stepTime = audioCtx.currentTime; // in seconds
   let currentStep = -1;
   function inqueue() {
     const stepDuration = 60 / tempoSlider.value;
-    console.log(stepDuration);
     while (stepTime < audioCtx.currentTime + bufferTime) {
       if (++currentStep >= stepCount.value) currentStep = 0;
       stepTime += stepDuration;
