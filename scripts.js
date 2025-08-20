@@ -33,30 +33,24 @@ const sineboom = (e) => {
 }
 
 function playBoom(startTime, btn) {
-  const gainNode = new GainNode(audioCtx);
-  // create Oscillator node
-  const biquadFilter = new BiquadFilterNode(audioCtx);
-
   const oscillator = new OscillatorNode(audioCtx, {
     frequency: 110,
     type: "sine",
   });
 
-  oscillator.frequency.setTargetAtTime(0, startTime, startTime + +decay.value);
-  const sweepEnv = new GainNode(audioCtx);
-  sweepEnv.gain.cancelScheduledValues(startTime);
-  sweepEnv.gain.setValueAtTime(1, startTime);
-  sweepEnv.gain.linearRampToValueAtTime(
+
+  const gainNode = new GainNode(audioCtx);
+  gainNode.gain.cancelScheduledValues(startTime);
+  gainNode.gain.setValueAtTime(1, startTime);
+  gainNode.gain.linearRampToValueAtTime(
     0,
     startTime + +decay.value
   );
-  oscillator.frequency.setTargetAtTime(20, startTime + 0.12, +decay.value);
+  //oscillator.frequency.setTargetAtTime(0, startTime, startTime + +decay.value);
+  //oscillator.frequency.setTargetAtTime(20, startTime + 0.12, +decay.value);
 
   oscillator.start(startTime);
   oscillator.stop(startTime + +decay.value);
-  /* biquadFilter.frequency.setTargetAtTime(1000, startTime, decay.value / 4);
-  biquadFilter.frequency.setTargetAtTime(110, startTime, decay.value / 2); */
-
   oscillator.connect(gainNode).connect(audioCtx.destination);
   if (btn) {
     cutoff = () => {
