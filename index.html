@@ -36,7 +36,7 @@
                 <td>
                   <label>
                     Decay
-                    <input type="range" id="decay" name="decay" value="0.4" min="0.1" max="2" step="0.1">
+                    <input class=setting type="range" id="decay" name="decay" value="0.4" min="0.1" max="2" step="0.1">
                   </label>
                 </td>
                 <td>
@@ -58,8 +58,8 @@
                 <td>
                   <label>
                     Length
-                    <input type="range" id="thwaplength" name="thwaplength" value="0.25" min="0.1" max="0.5"
-                      step="0.01">
+                    <input class=setting type="range" id="thwaplength" name="thwaplength" value="0.25" min="0.1"
+                      max="0.5" step="0.01">
                   </label>
                 </td>
                 <td>
@@ -70,8 +70,8 @@
                 <td>
                   <label>
                     Frequency
-                    <input type="range" id="thwapfrequency" name="thwapfrequency" value="7500" min="500" max="16000"
-                      step="100">
+                    <input class=setting type="range" id="thwapfrequency" name="thwapfrequency" value="7500" min="500"
+                      max="16000" step="100">
                   </label>
                 </td>
                 <td>
@@ -83,27 +83,34 @@
         </fieldset>
       </fieldset>
     </fieldset>
-    <fieldset id="sequencer">
-      <legend>Sequencer</legend>
-      <fieldset>
-        <legend>Settings</legend>
-        <label>
-          Step Count
-          <input id=stepCount type="number" step="1" value=2 min="1" max="16">
-        </label>
-        <label>
-          Tempo
-          <input id=tempoSlider type="range" step="1" value=120 min="40" max="360">
-        </label>
-        <button type="button" id="togglePlay">Play &gt;</button>
+    <div style="display: flex;">
+      <fieldset id="sequencer">
+        <legend>Sequencer</legend>
+        <fieldset>
+          <legend>Settings</legend>
+          <label>
+            Step Count
+            <input class=setting id=stepCount type="number" step="1" value=2 min="1" max="16">
+          </label>
+          <label>
+            Tempo
+            <input class=setting id=tempoSlider name=tempo type="range" step="1" value=120 min="40" max="360">
+          </label>
+          <button type="button" id="togglePlay">Play &gt;</button>
+        </fieldset>
+        <table>
+          <tbody>
+            <tr></tr>
+            <tr></tr>
+          </tbody>
+        </table>
       </fieldset>
-      <table>
-        <tbody>
-          <tr></tr>
-          <tr></tr>
-        </tbody>
-      </table>
-    </fieldset>
+      <fieldset>
+        <legend>Save/Load</legend>
+        <button id=copytoclipboard type="button">Copy Settings to Clipboard</button><br>
+        <button id=loadsettings type="button">Paste Settings JSON</button>
+      </fieldset>
+    </div>
   </main>
 </body>
 

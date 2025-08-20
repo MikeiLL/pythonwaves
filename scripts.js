@@ -8,6 +8,8 @@ const thwaplength = document.getElementById("thwaplength");
 const bandHz = document.getElementById("thwapfrequency");
 const stepCount = DOM("#stepCount");
 const tempoSlider = DOM("#tempoSlider");
+const rows = document.querySelectorAll("#sequencer tr");
+const soundNames = ["boom", "thwap"];
 let playing;
 let timer;
 
@@ -130,7 +132,7 @@ stepCount.onchange = buildSteps;
 decay.addEventListener("input", (e) => DOM("#decayvalue").innerHTML = e.currentTarget.value);
 thwaplength.addEventListener("input", (e) => DOM("#thwaplengthvalue").innerHTML = e.currentTarget.value);
 thwapfrequency.addEventListener("input", (e) => DOM("#thwapfrequencyvalue").innerHTML = e.currentTarget.value);
-const rows = document.querySelectorAll("#sequencer tr");
+
 
 on("click", "#togglePlay", (e) => {
   playing = !playing;
@@ -161,6 +163,17 @@ on("click", "#togglePlay", (e) => {
   else clearInterval(timer);
 });
 
-rows[0].append(TH("boom"));
-rows[1].append(TH("thwap"));
+soundNames.forEach((sn, idx) => rows[idx].append(TH(sn)));
 buildSteps();
+
+on("click", "#copytoclipboard", () => {
+  const settingsJSON = {};
+  document.querySelectorAll("input.setting").forEach(s => settingsJSON[s.name] = s.type == "checkbox" ? s.checked : s.value);
+  settingsJSON["pattern"] = {};
+  rows.forEach((row, idx) => settingsJSON["pattern"][soundNames[idx]] = Array.from(row.querySelectorAll("input")).map(beat => beat.checked));
+  console.log(JSON.stringify(settingsJSON));
+});
+
+on("click", "#loadsettings", () => {
+
+});
