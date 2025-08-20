@@ -137,15 +137,16 @@ on("click", "#togglePlay", (e) => {
   set_content(e.match, playing ? "Stop ||" : "Play >")
   const bufferTime = 0.2;
   let stepTime = audioCtx.currentTime; // in seconds
-  let currentStep = -1;
+  let currentStep = 0;
   function inqueue() {
     const stepDuration = 60 / tempoSlider.value;
-    while (stepTime < audioCtx.currentTime + bufferTime) {
+    while (stepTime < audioCtx.currentTime + bufferTime * 2) {
+      if (stepTime >= audioCtx.currentTime) {
+        DOM(`#stepaction-0-${currentStep}`).checked && playBoom(stepTime);
+        DOM(`#stepaction-1-${currentStep}`).checked && playNoise(stepTime);
+      }
       if (++currentStep >= stepCount.value) currentStep = 0;
       stepTime += stepDuration;
-      if (stepTime < audioCtx.currentTime) continue; // in case js gets behind
-      DOM(`#stepaction-0-${currentStep}`).checked && playBoom(stepTime);
-      DOM(`#stepaction-1-${currentStep}`).checked && playNoise(stepTime);
     }
 
     // loop through a number of beats (step through columns)
