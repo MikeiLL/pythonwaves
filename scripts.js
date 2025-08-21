@@ -162,7 +162,6 @@ on("click", "#togglePlay", (e) => {
   function inqueue() {
     const stepDuration = 60 / tempoSlider.value;
     const swingDuration = swingSlider.value / 100 * stepDuration;
-    console.log({"swing duration": swingDuration});
     while (stepTime < audioCtx.currentTime + bufferTime * 2) {
       if (stepTime >= audioCtx.currentTime) {
         DOM(`#stepaction-0-${currentStep}`).checked && playBoom(stepTime);
@@ -172,6 +171,15 @@ on("click", "#togglePlay", (e) => {
 
       // if (currentStep % 2) but we will do this the mathematician's way
       // raise -1 to some exponent to toggle back and forth
+      // negative 1 to the power of some integer will always be either
+      // negative one or positive one.
+      // so the number you put in determines the polarity.
+      // In this case we can't simply add time for swung beats, we need
+      // to also remove that time from the subsequent beat.
+      // so with four beats at 60bpm:
+      //  beat 1: 0
+      //  beat 2: 50 + 5
+      //  beat 3: 50 - 5
       stepTime += stepDuration - swingDuration * ((-1) ** currentStep)
     }
 
