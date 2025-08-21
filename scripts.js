@@ -2,6 +2,19 @@ import {choc, set_content, on, DOM} from "https://rosuav.github.io/choc/factory.
 const {INPUT, TD, TH} = choc; //autoimport
 import {impulseResponse} from "./assets.js";
 
+function copytext(copyme) {
+	try {navigator.clipboard.writeText(copyme);} //TODO: What if this fails asynchronously?
+	catch (exc) {
+    //If we can't copy to clipboard, it might be possible to do it via an MLE.
+    // (Multiline Entry Field which in HTML is TEXTAREA)
+		const mle = TEXTAREA({value: copyme, style: "position: absolute; left: -99999999px"});
+		document.body.append(mle);
+		mle.select();
+		try {document.execCommand("copy");}
+		finally {mle.remove();}
+	}
+}
+
 let cutoff = null, cutoffTM = null;
 const decay = document.getElementById("decay");
 const thwaplength = document.getElementById("thwaplength");
@@ -108,7 +121,12 @@ function playNoise(startTime) {
   });
 
   bandpass.frequency.linearRampToValueAtTime(
-    40,
+    bandHz.value / 2,
+    startTime + +decay.value / 6
+  );
+
+  bandpass.frequency.linearRampToValueAtTime(
+    100,
     startTime + +decay.value
   );
 
@@ -171,7 +189,7 @@ on("click", "#copytoclipboard", () => {
   document.querySelectorAll("input.setting").forEach(s => settingsJSON[s.name] = s.type == "checkbox" ? s.checked : s.value);
   settingsJSON["pattern"] = {};
   rows.forEach((row, idx) => settingsJSON["pattern"][soundNames[idx]] = Array.from(row.querySelectorAll("input")).map(beat => beat.checked));
-  console.log(JSON.stringify(settingsJSON));
+  copytext(JSON.stringify(settingsJSON));
 });
 
 on("click", "#loadsettings", () => {
