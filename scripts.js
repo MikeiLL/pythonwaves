@@ -140,7 +140,7 @@ function playNoise(startTime) {
 function buildSteps() {
   document.querySelectorAll("#sequencer td").forEach(cell => cell.remove());
   for (let i = 0; i < stepCount.value; i++) {
-    rows.forEach((row, r) => row.append(TD(INPUT({id: `stepaction-${r}-${i}`,type: "checkbox"}))));
+    rows.forEach((row, r) => row.append(TD(INPUT({id: `stepaction-${r}-${i}`,type: "checkbox", checked: (1 + r + i) % 2}))));
   }
 }
 
