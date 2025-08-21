@@ -21,6 +21,7 @@ const thwaplength = document.getElementById("thwaplength");
 const bandHz = document.getElementById("thwapfrequency");
 const stepCount = DOM("#stepCount");
 const tempoSlider = DOM("#tempoSlider");
+const swingSlider = DOM("#swing");
 const rows = document.querySelectorAll("#sequencer tr");
 const soundNames = ["boom", "thwap"];
 let playing;
@@ -160,13 +161,18 @@ on("click", "#togglePlay", (e) => {
   let currentStep = 0;
   function inqueue() {
     const stepDuration = 60 / tempoSlider.value;
+    const swingDuration = swingSlider.value / 100 * stepDuration;
+    console.log({"swing duration": swingDuration});
     while (stepTime < audioCtx.currentTime + bufferTime * 2) {
       if (stepTime >= audioCtx.currentTime) {
         DOM(`#stepaction-0-${currentStep}`).checked && playBoom(stepTime);
         DOM(`#stepaction-1-${currentStep}`).checked && playNoise(stepTime);
       }
       if (++currentStep >= stepCount.value) currentStep = 0;
-      stepTime += stepDuration;
+
+      // if (currentStep % 2) but we will do this the mathematician's way
+      // raise -1 to some exponent to toggle back and forth
+      stepTime += stepDuration - swingDuration * ((-1) ** currentStep)
     }
 
     // loop through a number of beats (step through columns)
