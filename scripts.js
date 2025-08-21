@@ -184,14 +184,20 @@ on("click", "#togglePlay", (e) => {
 soundNames.forEach((sn, idx) => rows[idx].append(TH(sn)));
 buildSteps();
 
-on("click", "#copytoclipboard", () => {
+function settingsUpdate() {
   const settingsJSON = {};
   document.querySelectorAll("input.setting").forEach(s => settingsJSON[s.name] = s.type == "checkbox" ? s.checked : s.value);
   settingsJSON["pattern"] = {};
   rows.forEach((row, idx) => settingsJSON["pattern"][soundNames[idx]] = Array.from(row.querySelectorAll("input")).map(beat => beat.checked));
-  copytext(JSON.stringify(settingsJSON));
+  DOM("textarea#settings").value = JSON.stringify(settingsJSON, null, 2);
+}
+on("change", "input", settingsUpdate);
+on("click", "#applySettings", () => {
+  const settingsJSON = JSON.parse(DOM("textarea#settings").value);
+  document.querySelectorAll("input.setting").forEach(s => s[s.type === "checkbox" ? "checked" : "value"] = settingsJSON[s.name]);
+  buildSteps();
+  rows.forEach((row, idx) => row.querySelectorAll("input").forEach((beat, bidx) => {
+    beat.checked = (settingsJSON["pattern"][soundNames[idx]] || [])[bidx];
+  }));
 });
-
-on("click", "#loadsettings", () => {
-
-});
+settingsUpdate();

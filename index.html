@@ -90,7 +90,7 @@
           <legend>Settings</legend>
           <label>
             Step Count
-            <input class=setting id=stepCount type="number" step="1" value=2 min="1" max="16">
+            <input name=stepCount class=setting id=stepCount type="number" step="1" value=2 min="1" max="16">
           </label>
           <label>
             Tempo
@@ -107,8 +107,8 @@
       </fieldset>
       <fieldset>
         <legend>Save/Load</legend>
-        <button id=copytoclipboard type="button">Copy Settings to Clipboard</button><br>
-        <button id=loadsettings type="button">Paste Settings JSON</button>
+        <textarea id="settings"></textarea><br>
+        <button id=applySettings type="button">Apply Settings</button>
       </fieldset>
     </div>
   </main>
