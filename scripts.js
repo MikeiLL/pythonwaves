@@ -2,28 +2,18 @@ import {choc, set_content, on, DOM} from "https://rosuav.github.io/choc/factory.
 const {INPUT, TD, TH} = choc; //autoimport
 import {impulseResponse} from "./assets.js";
 
-function copytext(copyme) {
-	try {navigator.clipboard.writeText(copyme);} //TODO: What if this fails asynchronously?
-	catch (exc) {
-    //If we can't copy to clipboard, it might be possible to do it via an MLE.
-    // (Multiline Entry Field which in HTML is TEXTAREA)
-		const mle = TEXTAREA({value: copyme, style: "position: absolute; left: -99999999px"});
-		document.body.append(mle);
-		mle.select();
-		try {document.execCommand("copy");}
-		finally {mle.remove();}
-	}
-}
-
 let cutoff = null, cutoffTM = null;
 const decay = document.getElementById("decay");
 const thwaplength = document.getElementById("thwaplength");
-const bandHz = document.getElementById("thwapfrequency");
+const thwapFrequency = document.getElementById("thwapfrequency");
+const beepLength = document.getElementById("beeplength");
+const beepFrequency = document.getElementById("beepfrequency");
+const beepDamp = document.getElementById("beepdamper");
 const stepCount = DOM("#stepCount");
 const tempoSlider = DOM("#tempoSlider");
 const swingSlider = DOM("#swing");
 const rows = document.querySelectorAll("#sequencer tr");
-const soundNames = ["boom", "thwap"];
+const soundNames = ["beep", "thwap", "boom"];
 let playing;
 let timer;
 
@@ -54,7 +44,6 @@ function playBoom(startTime, btn) {
     type: "sine",
   });
 
-
   const gainNode = new GainNode(audioCtx);
   gainNode.gain.cancelScheduledValues(startTime);
   gainNode.gain.setValueAtTime(1, startTime);
@@ -77,6 +66,38 @@ function playBoom(startTime, btn) {
     }
     cutoffTM = setTimeout(cutoff, decay.value * 2000);
   }
+}
+
+
+
+const beepit = (e) => {
+  let btn = e.match;
+  btn.classList.add("playing");
+  playBeep(audioCtx.currentTime);
+}
+
+function playBeep(startTime, btn) {
+  const oscillator = new OscillatorNode(audioCtx, {
+    frequency: beepFrequency.value,
+    type: "sawtooth",
+  });
+  const gainNode = new GainNode(audioCtx);
+  gainNode.gain.setValueAtTime(1, startTime);
+  gainNode.gain.setTargetAtTime(0, startTime, +beepLength.value);
+  // Filter the output
+  const bandpass = new BiquadFilterNode(audioCtx, {
+    type: "lowpass",
+    frequency: beepFrequency.value,
+  });
+
+  bandpass.frequency.linearRampToValueAtTime(
+    beepDamp.value,
+    startTime + +beepLength.value
+  );
+
+  oscillator.start(startTime);
+  oscillator.stop(startTime + +beepLength.value);
+  oscillator.connect(bandpass).connect(gainNode).connect(audioCtx.destination);
 }
 
 const noisethwap = (e) => {
@@ -117,14 +138,9 @@ function playNoise(startTime) {
 
   // Filter the output
   const bandpass = new BiquadFilterNode(audioCtx, {
-    type: "bandpass",
-    frequency: bandHz.value,
-  });
-
-  bandpass.frequency.linearRampToValueAtTime(
-    bandHz.value / 2,
-    startTime + +decay.value / 6
-  );
+    type: "lowpass",
+    frequency: thwapFrequency.value,
+  })
 
   bandpass.frequency.linearRampToValueAtTime(
     100,
@@ -147,10 +163,14 @@ function buildSteps() {
 
 on("click", "#thwap", noisethwap);
 on("click", "#boom", sineboom);
+on("click", "#beep", beepit);
 stepCount.onchange = buildSteps;
 decay.addEventListener("input", (e) => DOM("#decayvalue").innerHTML = e.currentTarget.value);
 thwaplength.addEventListener("input", (e) => DOM("#thwaplengthvalue").innerHTML = e.currentTarget.value);
-thwapfrequency.addEventListener("input", (e) => DOM("#thwapfrequencyvalue").innerHTML = e.currentTarget.value);
+thwapFrequency.addEventListener("input", (e) => DOM("#thwapfrequencyvalue").innerHTML = e.currentTarget.value);
+beepLength.addEventListener("input", (e) => DOM("#beeplengthvalue").innerHTML = e.currentTarget.value);
+beepFrequency.addEventListener("input", (e) => DOM("#beepfrequencyvalue").innerHTML = e.currentTarget.value);
+beepDamp.addEventListener("input", (e) => DOM("#beepdampervalue").innerHTML = e.currentTarget.value);
 
 
 on("click", "#togglePlay", (e) => {
@@ -164,8 +184,9 @@ on("click", "#togglePlay", (e) => {
     const swingDuration = swingSlider.value / 100 * stepDuration;
     while (stepTime < audioCtx.currentTime + bufferTime * 2) {
       if (stepTime >= audioCtx.currentTime) {
-        DOM(`#stepaction-0-${currentStep}`).checked && playBoom(stepTime);
+        DOM(`#stepaction-0-${currentStep}`).checked && playBeep(stepTime);
         DOM(`#stepaction-1-${currentStep}`).checked && playNoise(stepTime);
+        DOM(`#stepaction-2-${currentStep}`).checked && playBoom(stepTime);
       }
       if (++currentStep >= stepCount.value) currentStep = 0;
 

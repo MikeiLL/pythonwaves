@@ -12,6 +12,7 @@
   --grey: grey;
   --white: #eeeeff;
   --border: red;
+  --alice: aliceblue;
 }
 
 button#boom {
@@ -47,6 +48,23 @@ button#thwap {
   padding: 2em;
   width: 300px;
   height: 300px;
+  font-weight: bold;
+  color: var(--black);
+  cursor: pointer;
+  transition: background-color 2s, border 1.5s ease-in;
+}
+
+button#beep {
+  background-color: var(--alice);
+  border: 10px solid var(--black);
+  border-radius: 50%;
+  display: block;
+  margin: auto;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 2em;
+  padding: 2em;
+  width: 200px;
+  height: 200px;
   font-weight: bold;
   color: var(--black);
   cursor: pointer;

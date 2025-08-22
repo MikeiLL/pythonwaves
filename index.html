@@ -48,7 +48,7 @@
         </fieldset>
       </fieldset>
       <fieldset class="column">
-        <legend>High</legend>
+        <legend>Medium</legend>
         <button type="button" id="thwap">thwap</button>
         <fieldset>
           <legend>Settings</legend>
@@ -82,6 +82,53 @@
           </table>
         </fieldset>
       </fieldset>
+      <fieldset class="column">
+        <legend>Medium</legend>
+        <button type="button" id="beep">beep</button>
+        <fieldset>
+          <legend>Settings</legend>
+          <table>
+            <tbody>
+              <tr>
+                <td>
+                  <label>
+                    Length
+                    <input class=setting type="range" id="beeplength" name="beeplength" value="0.5" min="0.01" max="0.5"
+                      step="0.01">
+                  </label>
+                </td>
+                <td>
+                  <span id="beeplengthvalue">0.5</span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <label>
+                    Frequency
+                    <input class=setting type="range" id="beepfrequency" name="beepfrequency" value="4000" min="200"
+                      max="8000" step="100">
+                  </label>
+                </td>
+                <td>
+                  <span id="beepfrequencyvalue">7500</span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <label>
+                    Damp
+                    <input class=setting type="range" id="beepdamper" name="beepdamper" value="200" min="40" max="8000"
+                      step="20">
+                  </label>
+                </td>
+                <td>
+                  <span id="beepdampervalue">200</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </fieldset>
+      </fieldset>
     </fieldset>
     <div style="display: flex;">
       <fieldset id="sequencer">
@@ -104,6 +151,7 @@
         </fieldset>
         <table>
           <tbody>
+            <tr></tr>
             <tr></tr>
             <tr></tr>
           </tbody>
