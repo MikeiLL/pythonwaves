@@ -36,11 +36,12 @@
                 <td>
                   <label>
                     Decay
-                    <input class=setting type="range" id="decay" name="decay" value="0.4" min="0.1" max="2" step="0.1">
+                    <input class=setting type="range" id="boomlength" name="boomlength" value="0.4" min="0.1" max="2"
+                      step="0.1">
                   </label>
                 </td>
                 <td>
-                  <span id="decayvalue">1</span>
+                  <span id="boomlengthvalue">1</span>
                 </td>
               </tr>
             </tbody>
@@ -137,7 +138,7 @@
           <legend>Settings</legend>
           <label>
             Step Count
-            <input name=stepCount class=setting id=stepCount type="number" step="1" value=2 min="1" max="16">
+            <input name=stepCount class=setting id=stepcount type="number" step="1" value=2 min="1" max="16">
           </label>
           <label>
             Swing
@@ -145,9 +146,9 @@
           </label>
           <label>
             Tempo
-            <input class=setting id=tempoSlider name=tempo type="range" step="1" value=120 min="40" max="360">
+            <input class=setting id=temposlider name=temposlider type="range" step="1" value=120 min="40" max="360">
           </label>
-          <button type="button" id="togglePlay">Play &gt;</button>
+          <button type="button" id="toggleplay">Play &gt;</button>
         </fieldset>
         <table>
           <tbody>

@@ -3,14 +3,14 @@ const {INPUT, TD, TH} = choc; //autoimport
 import {impulseResponse} from "./assets.js";
 
 let cutoff = null, cutoffTM = null;
-const decay = document.getElementById("decay");
+const boomlength = document.getElementById("boomlength");
 const thwaplength = document.getElementById("thwaplength");
 const thwapFrequency = document.getElementById("thwapfrequency");
 const beepLength = document.getElementById("beeplength");
 const beepFrequency = document.getElementById("beepfrequency");
 const beepDamp = document.getElementById("beepdamper");
-const stepCount = DOM("#stepCount");
-const tempoSlider = DOM("#tempoSlider");
+const stepCount = DOM("#stepcount");
+const tempoSlider = DOM("#temposlider");
 const swingSlider = DOM("#swing");
 const rows = document.querySelectorAll("#sequencer tr");
 const soundNames = ["beep", "thwap", "boom"];
@@ -49,13 +49,11 @@ function playBoom(startTime, btn) {
   gainNode.gain.setValueAtTime(1, startTime);
   gainNode.gain.linearRampToValueAtTime(
     0,
-    startTime + +decay.value
+    startTime + +boomlength.value
   );
-  //oscillator.frequency.setTargetAtTime(0, startTime, startTime + +decay.value);
-  //oscillator.frequency.setTargetAtTime(20, startTime + 0.12, +decay.value);
 
   oscillator.start(startTime);
-  oscillator.stop(startTime + +decay.value);
+  oscillator.stop(startTime + +boomlength.value);
   oscillator.connect(gainNode).connect(audioCtx.destination);
   if (btn) {
     cutoff = () => {
@@ -64,7 +62,7 @@ function playBoom(startTime, btn) {
       clearTimeout(cutoffTM);
       cutoffTM = cutoff = null;
     }
-    cutoffTM = setTimeout(cutoff, decay.value * 2000);
+    cutoffTM = setTimeout(cutoff, boomlength.value * 2000);
   }
 }
 
@@ -144,7 +142,7 @@ function playNoise(startTime) {
 
   bandpass.frequency.linearRampToValueAtTime(
     100,
-    startTime + +decay.value
+    startTime + +boomlength.value
   );
 
   gainNode.gain.setValueAtTime(1, startTime);
@@ -165,7 +163,7 @@ on("click", "#thwap", noisethwap);
 on("click", "#boom", sineboom);
 on("click", "#beep", beepit);
 stepCount.onchange = buildSteps;
-decay.addEventListener("input", (e) => DOM("#decayvalue").innerHTML = e.currentTarget.value);
+boomlength.addEventListener("input", (e) => DOM("#boomlengthvalue").innerHTML = e.currentTarget.value);
 thwaplength.addEventListener("input", (e) => DOM("#thwaplengthvalue").innerHTML = e.currentTarget.value);
 thwapFrequency.addEventListener("input", (e) => DOM("#thwapfrequencyvalue").innerHTML = e.currentTarget.value);
 beepLength.addEventListener("input", (e) => DOM("#beeplengthvalue").innerHTML = e.currentTarget.value);
@@ -173,7 +171,7 @@ beepFrequency.addEventListener("input", (e) => DOM("#beepfrequencyvalue").innerH
 beepDamp.addEventListener("input", (e) => DOM("#beepdampervalue").innerHTML = e.currentTarget.value);
 
 
-on("click", "#togglePlay", (e) => {
+on("click", "#toggleplay", (e) => {
   playing = !playing;
   set_content(e.match, playing ? "Stop ||" : "Play >")
   const bufferTime = 0.2;
@@ -230,6 +228,7 @@ on("change", "input", settingsUpdate);
 on("click", "#share", () => {
   const settingsString = new URLSearchParams(JSON.parse(DOM("textarea#settings").value)).toString();
   console.log(window.location.href + "#" + settingsString);
+  // encode each byte
 })
 on("click", "#applySettings", () => {
   const settingsJSON = JSON.parse(DOM("textarea#settings").value);
