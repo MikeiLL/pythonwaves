@@ -227,6 +227,10 @@ function settingsUpdate() {
   DOM("textarea#settings").value = JSON.stringify(settingsJSON, null, 2);
 }
 on("change", "input", settingsUpdate);
+on("click", "#share", () => {
+  const settingsString = new URLSearchParams(JSON.parse(DOM("textarea#settings").value)).toString();
+  console.log(window.location.href + "#" + settingsString);
+})
 on("click", "#applySettings", () => {
   const settingsJSON = JSON.parse(DOM("textarea#settings").value);
   document.querySelectorAll("input.setting").forEach(s => s[s.type === "checkbox" ? "checked" : "value"] = settingsJSON[s.name]);
