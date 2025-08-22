@@ -3,8 +3,8 @@ const {INPUT, TD, TH} = choc; //autoimport
 import {impulseResponse} from "./assets.js";
 
 let cutoff = null, cutoffTM = null;
-const boomlength = document.getElementById("boomlength");
-const thwaplength = document.getElementById("thwaplength");
+const boomLength = document.getElementById("boomlength");
+const thwapLength = document.getElementById("thwaplength");
 const thwapFrequency = document.getElementById("thwapfrequency");
 const beepLength = document.getElementById("beeplength");
 const beepFrequency = document.getElementById("beepfrequency");
@@ -49,20 +49,20 @@ function playBoom(startTime, btn) {
   gainNode.gain.setValueAtTime(1, startTime);
   gainNode.gain.linearRampToValueAtTime(
     0,
-    startTime + +boomlength.value
+    startTime + +boomLength.value
   );
 
+  oscillator.frequency.linearRampToValueAtTime(40, startTime + +boomLength.value * 2);
   oscillator.start(startTime);
-  oscillator.stop(startTime + +boomlength.value);
+  oscillator.stop(startTime + +boomLength.value);
   oscillator.connect(gainNode).connect(audioCtx.destination);
   if (btn) {
     cutoff = () => {
-      //oscillator.stop();
       btn?.classList.remove("playing");
       clearTimeout(cutoffTM);
       cutoffTM = cutoff = null;
     }
-    cutoffTM = setTimeout(cutoff, boomlength.value * 2000);
+    cutoffTM = setTimeout(cutoff, boomLength.value * 2000);
   }
 }
 
@@ -115,7 +115,7 @@ const impulseBuffer = await audioCtx.decodeAudioData(reverbSoundArrayBuffer);
 function playNoise(startTime) {
   const gainNode = new GainNode(audioCtx);
   const reverbNode = audioCtx.createConvolver();
-  const bufferSize = audioCtx.sampleRate * thwaplength.value; // set the time of the note
+  const bufferSize = audioCtx.sampleRate * thwapLength.value; // set the time of the note
   reverbNode.buffer = impulseBuffer;
   // Create an empty buffer
   const noiseBuffer = new AudioBuffer({
@@ -146,7 +146,7 @@ function playNoise(startTime) {
   );
 
   gainNode.gain.setValueAtTime(1, startTime);
-  gainNode.gain.setTargetAtTime(0, startTime, thwaplength.value / 2);
+  gainNode.gain.setTargetAtTime(0, startTime, thwapLength.value / 2);
   // Connect our graph
   noise.connect(bandpass)/* .connect(reverbNode) */.connect(gainNode).connect(audioCtx.destination);
   noise.start(startTime);
@@ -163,8 +163,8 @@ on("click", "#thwap", noisethwap);
 on("click", "#boom", sineboom);
 on("click", "#beep", beepit);
 stepCount.onchange = buildSteps;
-boomlength.addEventListener("input", (e) => DOM("#boomlengthvalue").innerHTML = e.currentTarget.value);
-thwaplength.addEventListener("input", (e) => DOM("#thwaplengthvalue").innerHTML = e.currentTarget.value);
+boomLength.addEventListener("input", (e) => DOM("#boomlengthvalue").innerHTML = e.currentTarget.value);
+thwapLength.addEventListener("input", (e) => DOM("#thwaplengthvalue").innerHTML = e.currentTarget.value);
 thwapFrequency.addEventListener("input", (e) => DOM("#thwapfrequencyvalue").innerHTML = e.currentTarget.value);
 beepLength.addEventListener("input", (e) => DOM("#beeplengthvalue").innerHTML = e.currentTarget.value);
 beepFrequency.addEventListener("input", (e) => DOM("#beepfrequencyvalue").innerHTML = e.currentTarget.value);
