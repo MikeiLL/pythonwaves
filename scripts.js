@@ -170,6 +170,83 @@ beepLength.addEventListener("input", (e) => DOM("#beeplengthvalue").innerHTML = 
 beepFrequency.addEventListener("input", (e) => DOM("#beepfrequencyvalue").innerHTML = e.currentTarget.value);
 beepDamp.addEventListener("input", (e) => DOM("#beepdampervalue").innerHTML = e.currentTarget.value);
 
+/* Convert a pattern of true/false values to a string of octal digits
+Every three values, from the left, is assigned a digit. An incomplete
+set of three will be padded with zeroes at the right. */
+function to_octal(pattern) {
+  let ret = "";
+  for (let i = 0; i < pattern.length; i += 3) {
+  ret += (pattern[i] ? 4 : 0) + (pattern[i+1] ? 2 : 0) + (pattern[i+2] ? 1 : 0);
+  }
+  return ret;
+}
+
+function shareable(settings) {
+  const slug = [];
+  slug.push("C" + settings.stepcount);
+  slug.push("T" + settings.tempo);
+  slug.push("S" + settings.swing);
+  //Boom settings
+  slug.push("B" + settings.boomlength);
+  //Thwap settings
+  slug.push("X" + settings.thwaplength);
+  slug.push("X" + settings.thwapfrequency);
+  //Beep settings
+  slug.push("P" + settings.beeplength);
+  slug.push("P" + settings.beepfrequency);
+  slug.push("P" + settings.beepdamper);
+  //And the pattern.
+  slug.push("b" + to_octal(settings.pattern.boom));
+  slug.push("x" + to_octal(settings.pattern.thwap));
+  slug.push("p" + to_octal(settings.pattern.beep));
+  return slug.join("");
+}
+
+function load(slug) {
+  //The slug consists of a series of numbers, prefixed with a single letter.
+  //Some letters may be duplicated and will be interpreted in sequence within
+  //the duplicate set, but otherwise all values are order-independent.
+  // eg: C4T120S0B0.4X0.25X7500P0.5P4000P200b52x25p52
+  const keys = {
+    "C": ["stepcount"],
+    "T": ["tempo"],
+    "S": ["swing"],
+    "B": ["boomlength"],
+    "X": ["thwaplength", "thwapfrequency"],
+    "P": ["beeplength", "beepfrequency", "beepdamper"],
+    "b": ["pattern_boom"],
+    "x": ["pattern_thwap"],
+    "p": ["pattern_beep"],
+  };
+  const settings = {};
+  for (const m of slug.matchAll(/([A-Za-z])([0-9.]+)/g)) {
+    if (keys[m[1]]) {
+      if (!keys[m[1]].length) throw new Error("Duplicate code value " + m[1]);
+      settings[keys[m[1]].shift()] = m[2];
+    }
+  }
+  const stepcount = +settings.stepcount || 8;
+  for (const pat of ["boom", "thwap", "beep"]) {
+    const octal = settings["pattern_" + pat];
+    delete settings["pattern_" + pat];
+    if (!octal) continue;
+    const p = [];
+    for (let i = 0; i < stepcount; i += 3) {
+      const dig = +(octal[i / 3] || "0");
+      p.push(dig & 4 ? true : false);
+      p.push(dig & 2 ? true : false);
+      p.push(dig & 1 ? true : false);
+    }
+    p.length = stepcount; //Truncate to the exact step count
+    settings[pat] = p;
+  }
+  console.log(settings);
+  return settings;
+}
+
+//console.log(shareable(settings));
+//console.log(load("C4T120S0B0.4X0.25X7500P0.5P4000P200b52x25p52"));
+if (location.hash) load(location.hash.slice(1));
 
 on("click", "#toggleplay", (e) => {
   playing = !playing;
