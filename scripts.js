@@ -10,7 +10,7 @@ const beepLength = document.getElementById("beeplength");
 const beepFrequency = document.getElementById("beepfrequency");
 const beepDamp = document.getElementById("beepdamper");
 const stepCount = DOM("#stepcount");
-const tempoSlider = DOM("#temposlider");
+const tempoSlider = DOM("#tempo");
 const swingSlider = DOM("#swing");
 const rows = document.querySelectorAll("#sequencer tr");
 const soundNames = ["beep", "thwap", "boom"];
@@ -218,7 +218,7 @@ function load(slug) {
     "x": ["pattern_thwap"],
     "p": ["pattern_beep"],
   };
-  const settings = {};
+  const settings = {pattern: {}};
   for (const m of slug.matchAll(/([A-Za-z])([0-9.]+)/g)) {
     if (keys[m[1]]) {
       if (!keys[m[1]].length) throw new Error("Duplicate code value " + m[1]);
@@ -238,15 +238,10 @@ function load(slug) {
       p.push(dig & 1 ? true : false);
     }
     p.length = stepcount; //Truncate to the exact step count
-    settings[pat] = p;
+    settings.pattern[pat] = p;
   }
-  console.log(settings);
   return settings;
 }
-
-//console.log(shareable(settings));
-//console.log(load("C4T120S0B0.4X0.25X7500P0.5P4000P200b52x25p52"));
-if (location.hash) load(location.hash.slice(1));
 
 on("click", "#toggleplay", (e) => {
   playing = !playing;
@@ -300,19 +295,21 @@ function settingsUpdate() {
   settingsJSON["pattern"] = {};
   rows.forEach((row, idx) => settingsJSON["pattern"][soundNames[idx]] = Array.from(row.querySelectorAll("input")).map(beat => beat.checked));
   DOM("textarea#settings").value = JSON.stringify(settingsJSON, null, 2);
+  history.replaceState(null, "", "#" + shareable(settingsJSON));
 }
 on("change", "input", settingsUpdate);
-on("click", "#share", () => {
-  const settingsString = new URLSearchParams(JSON.parse(DOM("textarea#settings").value)).toString();
-  console.log(window.location.href + "#" + settingsString);
-  // encode each byte
-})
-on("click", "#applySettings", () => {
-  const settingsJSON = JSON.parse(DOM("textarea#settings").value);
-  document.querySelectorAll("input.setting").forEach(s => s[s.type === "checkbox" ? "checked" : "value"] = settingsJSON[s.name]);
+
+function applySettings(settingsJSON) {
+  document.querySelectorAll("input.setting").forEach(s => {
+    s[s.type === "checkbox" ? "checked" : "value"] = settingsJSON[s.name];
+  });
   buildSteps();
   rows.forEach((row, idx) => row.querySelectorAll("input").forEach((beat, bidx) => {
     beat.checked = (settingsJSON["pattern"][soundNames[idx]] || [])[bidx];
   }));
+}
+(location.hash) && applySettings(load(location.hash.slice(1)));
+on("click", "#applySettings", () => {
+  applySettings(JSON.parse(DOM("textarea#settings").value))
 });
 settingsUpdate();
