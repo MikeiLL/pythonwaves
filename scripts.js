@@ -12,6 +12,8 @@ const beepDamp = document.getElementById("beepdamper");
 const stepCount = DOM("#stepcount");
 const tempoSlider = DOM("#tempo");
 const swingSlider = DOM("#swing");
+const modulationFrequencySlider = DOM("#modulationfrequency");
+const modulationAmountSlider = DOM("#modulationamount");
 const rows = document.querySelectorAll("#sequencer tr");
 const soundNames = ["beep", "thwap", "boom"];
 let playing;
@@ -66,13 +68,18 @@ function playBoom(startTime, btn) {
   }
 }
 
-
-
 const beepit = (e) => {
   let btn = e.match;
   btn.classList.add("playing");
   playBeep(audioCtx.currentTime);
 }
+
+/*
+modulation:
+ range of values max
+ modulationAmountSlider.value determines size of range
+ modulationFrequencySlider.value determines step size (multiplied by resolution)
+*/
 
 function playBeep(startTime, btn) {
   const oscillator = new OscillatorNode(audioCtx, {
@@ -169,6 +176,8 @@ thwapFrequency.addEventListener("input", (e) => DOM("#thwapfrequencyvalue").inne
 beepLength.addEventListener("input", (e) => DOM("#beeplengthvalue").innerHTML = e.currentTarget.value);
 beepFrequency.addEventListener("input", (e) => DOM("#beepfrequencyvalue").innerHTML = e.currentTarget.value);
 beepDamp.addEventListener("input", (e) => DOM("#beepdampervalue").innerHTML = e.currentTarget.value);
+modulationFrequencySlider.addEventListener("input", (e) => DOM("#modulationfrequencyvalue").innerHTML = e.currentTarget.value);
+modulationAmountSlider.addEventListener("input", (e) => DOM("#modulationamountvalue").innerHTML = e.currentTarget.value);
 
 /* Convert a pattern of true/false values to a string of octal digits
 Every three values, from the left, is assigned a digit. An incomplete
@@ -195,6 +204,7 @@ function shareable(settings) {
   slug.push("P" + settings.beeplength);
   slug.push("P" + settings.beepfrequency);
   slug.push("P" + settings.beepdamper);
+  slug.push("P" + settings.modulation);
   //And the pattern.
   slug.push("b" + to_octal(settings.pattern.boom));
   slug.push("x" + to_octal(settings.pattern.thwap));
@@ -213,7 +223,7 @@ function load(slug) {
     "S": ["swing"],
     "B": ["boomlength"],
     "X": ["thwaplength", "thwapfrequency"],
-    "P": ["beeplength", "beepfrequency", "beepdamper"],
+    "P": ["beeplength", "beepfrequency", "beepdamper", "modulationfrequency"],
     "b": ["pattern_boom"],
     "x": ["pattern_thwap"],
     "p": ["pattern_beep"],
