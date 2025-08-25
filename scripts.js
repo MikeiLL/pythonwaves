@@ -80,10 +80,14 @@ modulation:
  modulationAmountSlider.value determines size of range
  modulationFrequencySlider.value determines step size (multiplied by resolution)
 */
+const modShapes = {
+  "square": [50, -50],
+  // "random":  [50, -50] (Math.random() < 0.5 ? modWaves.square[0] : modWaves.square[1])
+};
 
 function playBeep(startTime, btn) {
   const oscillator = new OscillatorNode(audioCtx, {
-    frequency: beepFrequency.value,
+    frequency: +beepFrequency.value + (Math.floor(audioCtx.currentTime) % 2 ? modShapes.square[0] : modShapes.square[1]),
     type: "sawtooth",
   });
   const gainNode = new GainNode(audioCtx);
@@ -204,7 +208,8 @@ function shareable(settings) {
   slug.push("P" + settings.beeplength);
   slug.push("P" + settings.beepfrequency);
   slug.push("P" + settings.beepdamper);
-  slug.push("P" + settings.modulation);
+  slug.push("P" + settings.modulationfrequency);
+  slug.push("P" + settings.modulationamount);
   //And the pattern.
   slug.push("b" + to_octal(settings.pattern.boom));
   slug.push("x" + to_octal(settings.pattern.thwap));
@@ -223,7 +228,7 @@ function load(slug) {
     "S": ["swing"],
     "B": ["boomlength"],
     "X": ["thwaplength", "thwapfrequency"],
-    "P": ["beeplength", "beepfrequency", "beepdamper", "modulationfrequency"],
+    "P": ["beeplength", "beepfrequency", "beepdamper", "modulationfrequency", "modulationamount"],
     "b": ["pattern_boom"],
     "x": ["pattern_thwap"],
     "p": ["pattern_beep"],
