@@ -67,12 +67,30 @@ function playBoom(startTime, btn) {
     cutoffTM = setTimeout(cutoff, boomLength.value * 2000);
   }
 }
-
-let BEEPOSC = null;
+const LFOamount = new GainNode(audioCtx, {
+  gain: modulationAmountSlider.value * 1000
+});
+const LFO = new OscillatorNode(audioCtx, {
+  frequency: 0.2,
+  type: "sine",
+});
+const BEEPOSC = new OscillatorNode(audioCtx, {
+  frequency: beepFrequency.value,
+  type: "sawtooth",
+});
+let BEEPOSC_STARTED = false;
 
 const beepit = (e) => {
   let btn = e.match;
   btn.classList.add("playing");
+  if (!BEEPOSC_STARTED) {
+    BEEPOSC_STARTED = true;
+    BEEPOSC.start();
+    LFO.start();
+  }
+  LFOamount.gain.value = modulationAmountSlider.value;
+  LFO.frequency.value = modulationFrequencySlider.value;
+  BEEPOSC.frequency.value = beepFrequency.value;
   playBeep(audioCtx.currentTime);
 }
 
@@ -88,18 +106,17 @@ const modShapes = {
 };
 
 function playBeep(startTime, btn) {
-  /*   const modAmt = modulationAmountSlider.value * 100;
-  const BEEPOSC = new OscillatorNode(audioCtx, {
-    frequency: +beepFrequency.value + (Math.floor(audioCtx.currentTime) % 2 ? modAmt * 1 : modAmt * -1),
-    type: "sawtooth",
-  }); */
-  const gainNode = new GainNode(audioCtx);
+  updateBeepSettings()
+  const gainNode = new GainNode(audioCtx, {
+    gain: 0.2,
+  });
   gainNode.gain.setValueAtTime(1, startTime);
   gainNode.gain.setTargetAtTime(0, startTime, +beepLength.value);
   // Filter the output
   const bandpass = new BiquadFilterNode(audioCtx, {
     type: "lowpass",
     frequency: beepFrequency.value,
+    gain: -40,
   });
 
   bandpass.frequency.linearRampToValueAtTime(
@@ -107,8 +124,6 @@ function playBeep(startTime, btn) {
     startTime + +beepLength.value
   );
 
-  //BEEPOSC.start(startTime);
-  //BEEPOSC.stop(startTime + +beepLength.value);
   BEEPOSC.connect(bandpass).connect(gainNode).connect(audioCtx.destination);
 }
 
@@ -262,7 +277,6 @@ function load(slug) {
 }
 
 on("click", "#LFOTEST", () => {
-  console.log("click");
   const TESTLFOamount = new GainNode(audioCtx, {
     gain: 10
   });
@@ -283,28 +297,27 @@ on("click", "#LFOTEST", () => {
   TESTBEEPOSC.start();
 });
 
+function updateBeepSettings() {
+  LFOamount.gain.value = 50;
+  LFO.frequency.value = 0.2;
+  BEEPOSC.frequency.value = beepFrequency.value;
+  LFO.connect(LFOamount);
+  LFOamount.connect(BEEPOSC.frequency);
+}
+
 on("click", "#toggleplay", (e) => {
   playing = !playing;
+  if (!BEEPOSC_STARTED) {
+    BEEPOSC_STARTED = true;
+    BEEPOSC.start();
+    LFO.start();
+  }
   set_content(e.match, playing ? "Stop ||" : "Play >")
   const bufferTime = 0.2;
   let stepTime = audioCtx.currentTime; // in seconds
   let currentStep = 0;
   if (playing) {
-    const LFOamount = new GainNode(audioCtx, {
-      gain: modulationAmountSlider.value
-    });
-    const LFO = new OscillatorNode(audioCtx, {
-      frequency: modulationFrequencySlider.value,
-      type: "sine",
-    });
-    BEEPOSC = new OscillatorNode(audioCtx, {
-      frequency: beepFrequency.value,
-      type: "sawtooth",
-    });
-    LFO.connect(LFOamount);
-    LFOamount.connect(BEEPOSC.frequency);
-    LFO.start();
-    BEEPOSC.start();
+    updateBeepSettings();
   }
   function inqueue() {
     const stepDuration = 60 / tempoSlider.value;
