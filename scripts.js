@@ -68,6 +68,8 @@ function playBoom(startTime, btn) {
   }
 }
 
+let BEEPOSC = null;
+
 const beepit = (e) => {
   let btn = e.match;
   btn.classList.add("playing");
@@ -86,11 +88,11 @@ const modShapes = {
 };
 
 function playBeep(startTime, btn) {
-  const modAmt = modulationAmountSlider.value * 100;
-  const oscillator = new OscillatorNode(audioCtx, {
+  /*   const modAmt = modulationAmountSlider.value * 100;
+  const BEEPOSC = new OscillatorNode(audioCtx, {
     frequency: +beepFrequency.value + (Math.floor(audioCtx.currentTime) % 2 ? modAmt * 1 : modAmt * -1),
     type: "sawtooth",
-  });
+  }); */
   const gainNode = new GainNode(audioCtx);
   gainNode.gain.setValueAtTime(1, startTime);
   gainNode.gain.setTargetAtTime(0, startTime, +beepLength.value);
@@ -105,9 +107,9 @@ function playBeep(startTime, btn) {
     startTime + +beepLength.value
   );
 
-  oscillator.start(startTime);
-  oscillator.stop(startTime + +beepLength.value);
-  oscillator.connect(bandpass).connect(gainNode).connect(audioCtx.destination);
+  //BEEPOSC.start(startTime);
+  //BEEPOSC.stop(startTime + +beepLength.value);
+  BEEPOSC.connect(bandpass).connect(gainNode).connect(audioCtx.destination);
 }
 
 const noisethwap = (e) => {
@@ -259,12 +261,51 @@ function load(slug) {
   return settings;
 }
 
+on("click", "#LFOTEST", () => {
+  console.log("click");
+  const TESTLFOamount = new GainNode(audioCtx, {
+    gain: 10
+  });
+  const TESTLFO = new OscillatorNode(audioCtx, {
+    frequency: 0.2,
+    type: "sine",
+  });
+  const TESTBEEPOSC = new OscillatorNode(audioCtx, {
+    frequency: 100,
+    type: "sawtooth",
+  });
+  TESTLFO.connect(TESTLFOamount);
+  TESTLFOamount.connect(TESTBEEPOSC.frequency);
+  const testGainNode = new GainNode(audioCtx);
+  testGainNode.gain.value = 0.3;
+  TESTBEEPOSC.connect(testGainNode).connect(audioCtx.destination)
+  TESTLFO.start();
+  TESTBEEPOSC.start();
+});
+
 on("click", "#toggleplay", (e) => {
   playing = !playing;
   set_content(e.match, playing ? "Stop ||" : "Play >")
   const bufferTime = 0.2;
   let stepTime = audioCtx.currentTime; // in seconds
   let currentStep = 0;
+  if (playing) {
+    const LFOamount = new GainNode(audioCtx, {
+      gain: modulationAmountSlider.value
+    });
+    const LFO = new OscillatorNode(audioCtx, {
+      frequency: modulationFrequencySlider.value,
+      type: "sine",
+    });
+    BEEPOSC = new OscillatorNode(audioCtx, {
+      frequency: beepFrequency.value,
+      type: "sawtooth",
+    });
+    LFO.connect(LFOamount);
+    LFOamount.connect(BEEPOSC.frequency);
+    LFO.start();
+    BEEPOSC.start();
+  }
   function inqueue() {
     const stepDuration = 60 / tempoSlider.value;
     const swingDuration = swingSlider.value / 100 * stepDuration;
