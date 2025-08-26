@@ -86,8 +86,9 @@ const modShapes = {
 };
 
 function playBeep(startTime, btn) {
+  const modAmt = modulationAmountSlider.value * 100;
   const oscillator = new OscillatorNode(audioCtx, {
-    frequency: +beepFrequency.value + (Math.floor(audioCtx.currentTime) % 2 ? modShapes.square[0] : modShapes.square[1]),
+    frequency: +beepFrequency.value + (Math.floor(audioCtx.currentTime) % 2 ? modAmt * 1 : modAmt * -1),
     type: "sawtooth",
   });
   const gainNode = new GainNode(audioCtx);
