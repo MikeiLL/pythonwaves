@@ -31,7 +31,6 @@
 
 <body>
   <main>
-    <button type="button" id="LFOTEST">TEST &gt;</button>
     <fieldset>
       <legend>Triggers</legend>
       <fieldset class="column">
@@ -127,7 +126,7 @@
                 <td>
                   <label>
                     Damp
-                    <input class=setting type="range" id="beepdamper" name="beepdamper" value="100" min="0" max="2000"
+                    <input class=setting type="range" id="beepdamper" name="beepdamper" value="100" min="0" max="800"
                       step="20">
                   </label>
                 </td>
@@ -204,6 +203,13 @@
         <legend>Save/Load</legend>
         <textarea id="settings"></textarea><br>
         <button id=applySettings type="button">Apply Settings</button>
+    </div>
+    <div>
+      <fieldset>
+        <legend>Sandbox</legend>
+        <button type="button" id="LFOTEST">TEST &gt;</button>
+        <button type="button" id="STOPTEST">STOP TEST ||</button>
+      </fieldset>
     </div>
   </main>
 </body>

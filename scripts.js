@@ -115,8 +115,8 @@ function playBeep(startTime, btn) {
   // Filter the output
   const bandpass = new BiquadFilterNode(audioCtx, {
     type: "lowpass",
-    frequency: beepFrequency.value,
-    gain: -40,
+    frequency: 300,
+    gain: 40,
   });
 
   bandpass.frequency.linearRampToValueAtTime(
@@ -173,7 +173,9 @@ function playNoise(startTime) {
     100,
     startTime + +boomlength.value
   );
-
+  // simply setting value isn't sufficient.
+  // for setTargetAtTime to work the value
+  // needs to also be set with setValueAtTime
   gainNode.gain.setValueAtTime(1, startTime);
   gainNode.gain.setTargetAtTime(0, startTime, thwapLength.value / 2);
   // Connect our graph
@@ -275,8 +277,14 @@ function load(slug) {
   }
   return settings;
 }
-
-on("click", "#LFOTEST", () => {
+const TESTOSCILLATORS = [];
+on("click", "#STOPTEST", () => {
+  TESTOSCILLATORS.forEach(o => o.stop());
+  TESTOSCILLATORS.length = 0;
+});
+on("click", "#LFOTEST", (e) => {
+  set_content(e.match, playing ? "Stop ||" : "Test >")
+  const startTime = audioCtx.currentTime;
   const TESTLFOamount = new GainNode(audioCtx, {
     gain: 10
   });
@@ -288,11 +296,20 @@ on("click", "#LFOTEST", () => {
     frequency: 100,
     type: "sawtooth",
   });
+
+  TESTOSCILLATORS.push(TESTBEEPOSC);
+
+  const bandpass = new BiquadFilterNode(audioCtx, {
+    type: "lowpass",
+    frequency: 100,
+    gain: 40,
+  });
   TESTLFO.connect(TESTLFOamount);
   TESTLFOamount.connect(TESTBEEPOSC.frequency);
   const testGainNode = new GainNode(audioCtx);
-  testGainNode.gain.value = 0.3;
-  TESTBEEPOSC.connect(testGainNode).connect(audioCtx.destination)
+  testGainNode.gain.setValueAtTime(0.3, startTime);
+  testGainNode.gain.setTargetAtTime(0, startTime + 2, startTime + 4);
+  TESTBEEPOSC.connect(bandpass).connect(testGainNode).connect(audioCtx.destination)
   TESTLFO.start();
   TESTBEEPOSC.start();
 });
